@@ -53,63 +53,18 @@ max_x, max_y = len(f[0]), len(f)
 
 out = set()
 
+for i in range(max_y):
+    pipes = 0
+    for j in range(max_x):
+        if [j, i] in positions:
+            if f[i][j] in ["|", "J", "L", "S"]:  # try with and without the S LOLLL
+                pipes += 1
+            continue
+        if pipes % 2 == 1:
+            out.add((j, i))
 
-def _fill(x, y):
-    # print(x, y)
-    print(len(out))
-    fill = set()
-    if [x, y] not in positions and (x, y) not in out:
-        out.add((x, y))
-        if x < 0 or x >= max_x or y < 0 or y >= max_y:
-            return
-        fill.add((x+1, y))
-        fill.add((x-1, y))
-        fill.add((x, y+1))
-        fill.add((x, y-1))
-        fill.add((x+1, y+1))
-        fill.add((x-1, y-1))
-        fill.add((x+1, y-1))
-        fill.add((x-1, y+1))
-        return fill
+print(len(out))
 
-
-def floodfill(x, y):
-    fill = _fill(x, y)
-    if fill is None:
-        return
-    while len(fill) > 0:
-        nx, ny = fill.pop()
-        f = _fill(nx, ny)
-        if f is not None:
-            for i in f:
-                fill.add(i)
-
-
-_map = {(0, 1): (1, 0), (1, 0): (0, -1), (0, -1): (-1, 0), (-1, 0): (0, 1)}
-_map = {(0, 1): (-1, 0), (-1, 0): (0, -1), (0, -1): (1, 0), (1, 0): (0, 1)}
-
-n_map = {}
-
-
-for i, pos in enumerate(positions):
-    if i == 0:
-        continue
-    x, y = pos
-    if (x, y) in n_map:
-        nx, ny = n_map[(x, y)]
-    else:
-        lx, ly = positions[i - 1]
-        dx, dy = x - lx, y - ly
-        nx, ny = _map[(dx, dy)]
-
-    if [nx + x, ny + y] not in positions:
-        floodfill(x + nx, y + ny)
-        out.add((x + nx, y + ny))
-        positions.append([x + nx, y + ny])
-        n_map[(x + nx, y + ny)] = (nx, ny)
-
-
-c = 0
 for i in range(max_y):
     for j in range(max_x):
         if (j, i) in out:
@@ -120,5 +75,4 @@ for i in range(max_y):
                 print(f"\033[92m{f[i][j]}\033[0m", end="")
             if [j, i] not in positions:
                 print(f[i][j], end="")
-                c += 1
     print()
